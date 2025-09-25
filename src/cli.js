@@ -16,7 +16,7 @@ fs.readFile(link, "utf-8", (err, texto) => {
     }
 });
 
-/* async function criaESalvaArquivo(listaPalavras, endereco){
+ async function criaESalvaArquivo(listaPalavras, endereco){
     const arquivoNovo = `${endereco}/resultado.txt`;
     const textoPalavras = JSON.stringify(listaPalavras);
     try{
@@ -25,7 +25,7 @@ fs.readFile(link, "utf-8", (err, texto) => {
     }catch(erro){
         throw erro;
     }
-} */
+} 
 
  function criaESalvaArquivo(listaPalavras, endereco){
     const arquivoNovo = `${endereco}/resultado.txt`;
