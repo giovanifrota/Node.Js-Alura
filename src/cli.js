@@ -1,21 +1,51 @@
 import fs from 'fs';//FS é File System faz com que vc interaja com sistema de arquivos do computador (É UMA BIBLIOTECA DO NODE)
+import path from 'path';
 import trataErros from './erros/funcoesErros.js';
 import { contaPalavras } from './index.js';
 import { montaSaidaArquivo } from './helpers.js';
+import { Command } from 'commander';
+import chalk from 'chalk';
 
-const caminhoArquivo = process.argv; //Esse comando pega os valores que sao passados no terminal e coloca eles em um array
-const link = caminhoArquivo[2];
-const endereco = caminhoArquivo[3];
+const program = new Command();
 
-fs.readFile(link, "utf-8", (err, texto) => {
-    try{
-        if(err) throw err;
-        const resultado = contaPalavras(texto);
-        criaESalvaArquivo(resultado, endereco);
-    } catch(err){
-        trataErros(err);
+program
+.version('0.0.1')
+.option('-t, --texto <string>', 'caminho do texto a ser processado')
+.option('-d, --destino <string>', 'caminho da pasta onde salvar o arquivo de resultados')
+.action((options) => {
+    const {texto, destino} = options;
+
+    if(!texto || !destino){
+        console.error(chalk.red('Erro favor inserir caminho de origem de destino'));
+        program.help();
+        return;
     }
-});
+
+    const caminhoTexto = path.resolve(texto);
+    const caminhoDestino = path.resolve(destino);
+
+    try{
+        processaArquivo(caminhoTexto, caminhoDestino);
+        console.log(chalk.green('Texto processado com sucesso'));
+    }catch(erro){
+        console.log('ocorreu um erro no processamento', erro);
+    }
+})
+
+program.parse();
+
+function processaArquivo(texto, destino){
+    fs.readFile(texto, "utf-8", (err, texto) => {
+        try{
+            if(err) throw err;
+            const resultado = contaPalavras(texto);
+            criaESalvaArquivo(resultado, destino);
+        } catch(err){
+            trataErros(err);
+        }
+    });
+}
+
 
  async function criaESalvaArquivo(listaPalavras, endereco){
     const arquivoNovo = `${endereco}/resultado.txt`;
